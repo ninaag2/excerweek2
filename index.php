@@ -1,43 +1,18 @@
 <?php
-if (!isset($_POST['val1'])) {
-    include 'templates/form.html.php';
-} else {
-    $val1 = $_POST['val1'];
-    $val2 = $_POST['val2'];
-    $calc = $_POST['calc'];
+$jokes = [];
+$error = '';
 
-    // TASK 3: Validation kiểm tra số
-    if (is_numeric($val1) && is_numeric($val2)) {
-        $val1 = (float)$val1;
-        $val2 = (float)$val2;
-        
-        switch ($calc) {
-            case 'add':
-                $result = $val1 + $val2;
-                break;
-            case 'sub':
-                $result = $val1 - $val2;
-                break;
-            case 'mul':
-                $result = $val1 * $val2;
-                break;
-            case 'div':
-                if ($val2 != 0) {
-                    $result = $val1 / $val2;
-                } else {
-                    $result = "Cannot divide by zero";
-                }
-                break;
-            default:
-                $result = "Invalid operation";
-        }
-
-        $output = "Calculation result: " . $result;
-        include 'templates/result.html.php';
-    } else {
-        // TASK 3: Hiển thị lỗi nếu nhập không phải số
-        $error = "Invalid entry - please retry";
-        include 'templates/error.html.php';
-    }
+try {
+    $pdo = new PDO('mysql:host=localhost;dbname=week4;charset=utf8mb4', 'root', '');
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    
+    $sql = 'SELECT joketext, jokedate, image FROM jokes ORDER BY jokedate DESC';
+    $result = $pdo->query($sql);
+    $jokes = $result->fetchAll(PDO::FETCH_ASSOC);
+    
+} catch (PDOException $e) {
+    $error = 'Unable to connect to the database: ' . $e->getMessage();
 }
+
+include 'templates/joke.html.php';
 ?>
