@@ -27,4 +27,21 @@ function updatejokes($pdo, $id, $joketext) {
               ':id' => $id ];
         query($pdo, $query, $parameters);
 }
+function deletejokes($pdo, $id) {
+       $query = 'DELETE FROM jokes WHERE id = :id';
+         $parameters = [
+              ':id' => $id ];
+        query($pdo, $query, $parameters);
+}
+function addjokes($pdo, $joketext, $authorid, $categoryid, $imagePath = null) {
+         $query = 'INSERT INTO jokes (joketext, image, jokedate, authorid, categoryid) 
+                 VALUES (:joketext, :image, CURDATE(), :authorid, :categoryid)';
+         $parameters = [
+              ':joketext' => $joketext,
+              ':authorid' => $authorid,
+              ':categoryid' => $categoryid,
+              ':image' => $imagePath
+         ];
+         query($pdo, $query, $parameters);
+}
 ?>
